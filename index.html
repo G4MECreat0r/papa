@@ -31,7 +31,11 @@
     background: #ff0033; padding: 14px 18px;
     display: flex; align-items: center; justify-content: space-between;
   }
-  .logo { color: #fff; font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
+  .logo {
+    color: #fff; font-weight: 700; font-size: 19px; letter-spacing: -.02em;
+    cursor: pointer; user-select: none; -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
   .tb { color: #fff; font-size: 12px; opacity: .9; }
 
   .body { padding: 26px 22px 22px; text-align: center; }
@@ -44,12 +48,8 @@
   .who { font-size: 15px; font-weight: 500; color: #111827; margin: 0 0 16px; }
   .amt { font-size: 40px; font-weight: 700; color: #111827; letter-spacing: -.03em; margin: 0; }
   .amt small { font-size: 16px; font-weight: 500; color: #6b7280; margin-right: 2px; }
-  .note {
-    font-size: 12.5px; color: #4b5563; line-height: 1.6; background: #f7f7f8;
-    border-radius: 10px; padding: 10px 12px; margin: 16px 0 0; text-align: left;
-  }
   .timer {
-    display: inline-flex; align-items: center; gap: 6px; margin: 14px 0 0;
+    display: inline-flex; align-items: center; gap: 6px; margin: 18px 0 0;
     font-size: 12px; color: #b45309; background: #fef6e7;
     border-radius: 999px; padding: 5px 12px; font-variant-numeric: tabular-nums;
   }
@@ -61,15 +61,6 @@
   }
   .cta:active { transform: scale(.99); }
   .under { font-size: 11px; color: #9ca3af; margin: 10px 0 0; line-height: 1.6; }
-  .idrow {
-    margin-top: 16px; border-top: 1px solid #eceef1; padding-top: 12px;
-    font-size: 11.5px; color: #6b7280;
-  }
-  .idrow b { color: #111827; font-weight: 500; }
-  .idrow button {
-    border: 1px solid #d1d5db; background: #fff; color: #374151; font-size: 11px;
-    border-radius: 6px; padding: 3px 8px; margin-left: 6px; cursor: pointer; font-family: inherit;
-  }
 
   .done { padding: 40px 22px 28px; text-align: center; }
   .check { width: 62px; height: 62px; margin: 0 auto 16px; }
@@ -86,12 +77,8 @@
     font-weight: 500; text-decoration: none; text-align: center; font-family: inherit;
   }
 
-  .toggle {
-    margin-top: 22px; background: none; border: 0; color: #8b8f96;
-    font-size: 11.5px; cursor: pointer; font-family: inherit; text-decoration: underline;
-  }
   .panel {
-    width: 100%; max-width: 370px; margin-top: 12px; padding: 14px;
+    width: 100%; max-width: 370px; margin-top: 14px; padding: 14px;
     background: #fff; border: 1px solid #e3e5e8; border-radius: 14px;
   }
   .panel[hidden] { display: none; }
@@ -116,7 +103,7 @@
   @media (max-width: 520px) {
     body { padding: 0 0 40px; background: #fff; }
     .phone { max-width: 100%; border: 0; border-radius: 0; }
-    .toggle, .panel { width: calc(100% - 32px); }
+    .panel { width: calc(100% - 32px); }
   }
 </style>
 </head>
@@ -124,21 +111,17 @@
 
 <div class="phone">
   <div class="topbar">
-    <span class="logo">PayPay</span>
+    <span class="logo" id="logo">PayPay</span>
     <span class="tb">受け取り</span>
   </div>
   <div id="view"></div>
 </div>
 
-<button class="toggle" id="toggle">設定</button>
-
 <div class="panel" id="panel" hidden>
   <div class="grid">
     <label>宛名（請求する相手）<input id="f-to" type="text"></label>
     <label>金額<input id="f-amount" type="text" inputmode="numeric"></label>
-    <label class="full">メモ<input id="f-note" type="text"></label>
     <label class="full">PayPayの受け取りリンク<input id="f-link" type="text"></label>
-    <label class="full">PayPay ID（リンクが開かない時の保険）<input id="f-id" type="text"></label>
     <label>期限（秒）<input id="f-sec" type="text" inputmode="numeric"></label>
     <label>自動で開く（秒・0で無効）<input id="f-auto" type="text" inputmode="numeric"></label>
   </div>
@@ -156,9 +139,7 @@
   var st = {
     to: P.get('to') || '田中 太郎',
     amount: P.get('amount') || '1500',
-    note: P.get('note') || '先日の飲み会の割り勘ぶんです。よろしくお願いします。',
     link: P.get('link') || 'https://pay.paypay.ne.jp/2rJkQ9xLmB7',
-    id: P.get('id') || 'tanaka_taro',
     sec: parseInt(P.get('sec') || '1800', 10),
     auto: parseInt(P.get('auto') || '0', 10)
   };
@@ -186,20 +167,14 @@
         '<p class="lead">' + st.to + ' さんから請求が届いています</p>' +
         '<p class="who">お支払い金額</p>' +
         '<p class="amt"><small>&yen;</small>' + yen(st.amount) + '</p>' +
-        (st.note ? '<div class="note">' + st.note + '</div>' : '') +
         '<div class="timer"><span class="dot"></span><span id="cd">' +
           (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s +
         '</span> 以内に受け取る</div>' +
         '<button class="cta" id="go">受け取る</button>' +
         '<p class="under">PayPayの受け取りリンクを開きます</p>' +
-        (st.id ? '<div class="idrow">PayPay ID：<b>' + st.id +
-          '</b><button id="cpid">コピー</button></div>' : '') +
       '</div>';
 
     document.getElementById('go').onclick = done;
-    var cp = document.getElementById('cpid');
-    if (cp) cp.onclick = function () { copy(st.id); };
-
     document.title = st.to + ' さんから請求が届いています | PayPay';
 
     clearInterval(tick);
@@ -233,8 +208,7 @@
         '<div class="dbox">お支払い金額 <b>&yen;' + yen(st.amount) + '</b></div>' +
         (st.link ? '<a class="ghostb" href="' + st.link +
           '" target="_blank" rel="noopener">PayPayで開く</a>' : '') +
-        '<p class="under">リンクが開かない場合はアプリで ID「' + st.id +
-          '」を指定してください</p>' +
+        '<p class="under">リンクが開かない場合はPayPayアプリから開き直してください</p>' +
       '</div>';
 
     if (st.auto > 0 && st.link) {
@@ -252,9 +226,7 @@
     var q = [];
     if (st.to) q.push('to=' + encodeURIComponent(st.to));
     if (st.amount) q.push('amount=' + encodeURIComponent(st.amount));
-    if (st.note) q.push('note=' + encodeURIComponent(st.note));
     if (st.link) q.push('link=' + encodeURIComponent(st.link));
-    if (st.id) q.push('id=' + encodeURIComponent(st.id));
     if (st.sec) q.push('sec=' + st.sec);
     if (st.auto) q.push('auto=' + st.auto);
     out.value = q.length ? base + '?' + q.join('&') : base;
@@ -271,9 +243,7 @@
   }
   bind('f-to', 'to', render);
   bind('f-amount', 'amount', render);
-  bind('f-note', 'note', render);
   bind('f-link', 'link', render);
-  bind('f-id', 'id', render);
 
   document.getElementById('f-sec').value = st.sec;
   document.getElementById('f-sec').oninput = function () {
@@ -294,10 +264,20 @@
     render();
     hint.textContent = '最初から再生しました。';
   };
-  document.getElementById('toggle').onclick = function () {
-    var p = document.getElementById('panel');
-    p.hidden = !p.hidden;
-  };
+
+  // ロゴを1.5秒以内に5回タップで設定パネルを開閉
+  var taps = 0, tapTimer;
+  document.getElementById('logo').addEventListener('click', function () {
+    taps++;
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(function () { taps = 0; }, 1500);
+    if (taps >= 5) {
+      taps = 0;
+      var p = document.getElementById('panel');
+      p.hidden = !p.hidden;
+      if (!p.hidden) p.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
 
   buildUrl();
   render();
