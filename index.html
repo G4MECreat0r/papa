@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PayPay 受け取り</title>
+<meta name="theme-color" content="#ff0033">
+
+<!-- OGP：公開後、URLと画像パスを自分のものに差し替える -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="PayPay 受け取りのお知らせ">
+<meta property="og:description" content="お支払いの受け取りが届いています。">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:image" content="https://example.com/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 16px 60px; background: #f4f5f7;
+    font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .phone {
+    width: 100%; max-width: 370px; border: 1px solid #e3e5e8;
+    border-radius: 28px; overflow: hidden; background: #fff;
+  }
+  .topbar {
+    background: #ff0033; padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { color: #fff; font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
+  .tb { color: #fff; font-size: 12px; opacity: .9; }
+
+  .body { padding: 26px 22px 22px; text-align: center; }
+  .av {
+    width: 56px; height: 56px; border-radius: 50%; background: #f1f2f4;
+    color: #4b5563; font-size: 20px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+  }
+  .lead { font-size: 13px; color: #6b7280; margin: 0 0 4px; }
+  .who { font-size: 15px; font-weight: 500; color: #111827; margin: 0 0 16px; }
+  .amt { font-size: 40px; font-weight: 700; color: #111827; letter-spacing: -.03em; margin: 0; }
+  .amt small { font-size: 16px; font-weight: 500; color: #6b7280; margin-right: 2px; }
+  .note {
+    font-size: 12.5px; color: #4b5563; line-height: 1.6; background: #f7f7f8;
+    border-radius: 10px; padding: 10px 12px; margin: 16px 0 0; text-align: left;
+  }
+  .timer {
+    display: inline-flex; align-items: center; gap: 6px; margin: 14px 0 0;
+    font-size: 12px; color: #b45309; background: #fef6e7;
+    border-radius: 999px; padding: 5px 12px; font-variant-numeric: tabular-nums;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; }
+  .cta {
+    display: block; width: 100%; margin-top: 18px; padding: 15px; border: 0;
+    border-radius: 12px; background: #ff0033; color: #fff; font-size: 16px;
+    font-weight: 700; cursor: pointer; font-family: inherit;
+  }
+  .cta:active { transform: scale(.99); }
+  .under { font-size: 11px; color: #9ca3af; margin: 10px 0 0; line-height: 1.6; }
+  .idrow {
+    margin-top: 16px; border-top: 1px solid #eceef1; padding-top: 12px;
+    font-size: 11.5px; color: #6b7280;
+  }
+  .idrow b { color: #111827; font-weight: 500; }
+  .idrow button {
+    border: 1px solid #d1d5db; background: #fff; color: #374151; font-size: 11px;
+    border-radius: 6px; padding: 3px 8px; margin-left: 6px; cursor: pointer; font-family: inherit;
+  }
+
+  .done { padding: 40px 22px 28px; text-align: center; }
+  .check { width: 62px; height: 62px; margin: 0 auto 16px; }
+  .dh { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 6px; }
+  .dp { font-size: 12.5px; color: #6b7280; margin: 0; line-height: 1.7; }
+  .dbox {
+    margin: 18px 0 0; background: #f7f7f8; border-radius: 10px; padding: 12px;
+    font-size: 12.5px; color: #4b5563;
+  }
+  .dbox b { color: #111827; font-weight: 700; font-size: 15px; }
+  .ghostb {
+    display: block; width: 100%; margin-top: 12px; padding: 13px; border-radius: 12px;
+    border: 1px solid #d1d5db; background: #fff; color: #374151; font-size: 14px;
+    font-weight: 500; text-decoration: none; text-align: center; font-family: inherit;
+  }
+
+  .toggle {
+    margin-top: 22px; background: none; border: 0; color: #8b8f96;
+    font-size: 11.5px; cursor: pointer; font-family: inherit; text-decoration: underline;
+  }
+  .panel {
+    width: 100%; max-width: 370px; margin-top: 12px; padding: 14px;
+    background: #fff; border: 1px solid #e3e5e8; border-radius: 14px;
+  }
+  .panel[hidden] { display: none; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .grid label { font-size: 11px; color: #6b7280; display: block; }
+  .grid .full { grid-column: 1 / -1; }
+  .grid input, .row input {
+    width: 100%; margin-top: 3px; padding: 7px 9px; font-size: 12px;
+    font-family: inherit; border-radius: 7px; border: 1px solid #d8dade;
+    background: #fff; color: #111827;
+  }
+  .grid input:focus, .row input:focus { outline: none; border-color: #ff0033; }
+  .row { display: flex; gap: 6px; margin-top: 10px; }
+  .row input { flex: 1; }
+  .mini {
+    flex: 0 0 auto; padding: 7px 11px; font-size: 11.5px; border-radius: 7px;
+    cursor: pointer; border: 0; background: #ff0033; color: #fff; font-family: inherit;
+  }
+  .mini.ghost { background: #eef0f2; color: #374151; }
+  .hint { font-size: 11px; color: #8b8f96; margin-top: 8px; line-height: 1.6; }
+
+  @media (max-width: 520px) {
+    body { padding: 0 0 40px; background: #fff; }
+    .phone { max-width: 100%; border: 0; border-radius: 0; }
+    .toggle, .panel { width: calc(100% - 32px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="topbar">
+    <span class="logo">PayPay</span>
+    <span class="tb">受け取り</span>
+  </div>
+  <div id="view"></div>
+</div>
+
+<button class="toggle" id="toggle">設定</button>
+
+<div class="panel" id="panel" hidden>
+  <div class="grid">
+    <label>宛名（請求する相手）<input id="f-to" type="text"></label>
+    <label>金額<input id="f-amount" type="text" inputmode="numeric"></label>
+    <label class="full">メモ<input id="f-note" type="text"></label>
+    <label class="full">PayPayの受け取りリンク<input id="f-link" type="text"></label>
+    <label class="full">PayPay ID（リンクが開かない時の保険）<input id="f-id" type="text"></label>
+    <label>期限（秒）<input id="f-sec" type="text" inputmode="numeric"></label>
+    <label>自動で開く（秒・0で無効）<input id="f-auto" type="text" inputmode="numeric"></label>
+  </div>
+  <div class="row">
+    <input id="out" type="text" readonly>
+    <button class="mini" id="copy">コピー</button>
+    <button class="mini ghost" id="reset">再生</button>
+  </div>
+  <div class="hint" id="hint">このURLをLINEなどで送ると、相手には上の画面が出ます。</div>
+</div>
+
+<script>
+(function () {
+  var P = new URLSearchParams(location.search);
+  var st = {
+    to: P.get('to') || '田中 太郎',
+    amount: P.get('amount') || '1500',
+    note: P.get('note') || '先日の飲み会の割り勘ぶんです。よろしくお願いします。',
+    link: P.get('link') || 'https://pay.paypay.ne.jp/2rJkQ9xLmB7',
+    id: P.get('id') || 'tanaka_taro',
+    sec: parseInt(P.get('sec') || '1800', 10),
+    auto: parseInt(P.get('auto') || '0', 10)
+  };
+  var deadline = Date.now() + st.sec * 1000;
+  var tick, autoTimer, isDone = false;
+
+  var view = document.getElementById('view');
+  var out = document.getElementById('out');
+  var hint = document.getElementById('hint');
+
+  function yen(v) {
+    var n = parseInt(String(v).replace(/[^0-9]/g, ''), 10);
+    return (isNaN(n) ? 0 : n).toLocaleString('ja-JP');
+  }
+  function initial(s) { return (s || '?').trim().charAt(0); }
+
+  function render() {
+    isDone = false;
+    var left = Math.max(0, deadline - Date.now());
+    var m = Math.floor(left / 60000), s = Math.floor((left % 60000) / 1000);
+
+    view.innerHTML =
+      '<div class="body">' +
+        '<div class="av">' + initial(st.to) + '</div>' +
+        '<p class="lead">' + st.to + ' さんから請求が届いています</p>' +
+        '<p class="who">お支払い金額</p>' +
+        '<p class="amt"><small>&yen;</small>' + yen(st.amount) + '</p>' +
+        (st.note ? '<div class="note">' + st.note + '</div>' : '') +
+        '<div class="timer"><span class="dot"></span><span id="cd">' +
+          (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s +
+        '</span> 以内に受け取る</div>' +
+        '<button class="cta" id="go">受け取る</button>' +
+        '<p class="under">PayPayの受け取りリンクを開きます</p>' +
+        (st.id ? '<div class="idrow">PayPay ID：<b>' + st.id +
+          '</b><button id="cpid">コピー</button></div>' : '') +
+      '</div>';
+
+    document.getElementById('go').onclick = done;
+    var cp = document.getElementById('cpid');
+    if (cp) cp.onclick = function () { copy(st.id); };
+
+    document.title = st.to + ' さんから請求が届いています | PayPay';
+
+    clearInterval(tick);
+    tick = setInterval(function () {
+      var el = document.getElementById('cd');
+      if (!el) return clearInterval(tick);
+      var l = Math.max(0, deadline - Date.now());
+      var mm = Math.floor(l / 60000), ss = Math.floor((l % 60000) / 1000);
+      el.textContent = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+    }, 1000);
+
+    clearTimeout(autoTimer);
+    if (st.auto > 0) autoTimer = setTimeout(done, st.auto * 1000);
+  }
+
+  function done() {
+    if (isDone) return;
+    isDone = true;
+    clearInterval(tick);
+    clearTimeout(autoTimer);
+
+    view.innerHTML =
+      '<div class="done">' +
+        '<svg class="check" viewBox="0 0 62 62" fill="none">' +
+          '<circle cx="31" cy="31" r="29" stroke="#22c55e" stroke-width="3"/>' +
+          '<path d="M19 32.5 L27.5 41 L44 24" stroke="#22c55e" stroke-width="4" ' +
+            'stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>' +
+        '<p class="dh">受け取りました</p>' +
+        '<p class="dp">' + st.to + ' さんへのお支払いです。<br>PayPayアプリで確定してください。</p>' +
+        '<div class="dbox">お支払い金額 <b>&yen;' + yen(st.amount) + '</b></div>' +
+        (st.link ? '<a class="ghostb" href="' + st.link +
+          '" target="_blank" rel="noopener">PayPayで開く</a>' : '') +
+        '<p class="under">リンクが開かない場合はアプリで ID「' + st.id +
+          '」を指定してください</p>' +
+      '</div>';
+
+    if (st.auto > 0 && st.link) {
+      setTimeout(function () { location.href = st.link; }, 1200);
+    }
+  }
+
+  function copy(t) {
+    if (navigator.clipboard) navigator.clipboard.writeText(t);
+    hint.textContent = 'コピーしました：' + t;
+  }
+
+  function buildUrl() {
+    var base = location.origin + location.pathname;
+    var q = [];
+    if (st.to) q.push('to=' + encodeURIComponent(st.to));
+    if (st.amount) q.push('amount=' + encodeURIComponent(st.amount));
+    if (st.note) q.push('note=' + encodeURIComponent(st.note));
+    if (st.link) q.push('link=' + encodeURIComponent(st.link));
+    if (st.id) q.push('id=' + encodeURIComponent(st.id));
+    if (st.sec) q.push('sec=' + st.sec);
+    if (st.auto) q.push('auto=' + st.auto);
+    out.value = q.length ? base + '?' + q.join('&') : base;
+  }
+
+  function bind(id, key, after) {
+    var el = document.getElementById(id);
+    el.value = st[key];
+    el.oninput = function () {
+      st[key] = el.value;
+      if (after) after();
+      buildUrl();
+    };
+  }
+  bind('f-to', 'to', render);
+  bind('f-amount', 'amount', render);
+  bind('f-note', 'note', render);
+  bind('f-link', 'link', render);
+  bind('f-id', 'id', render);
+
+  document.getElementById('f-sec').value = st.sec;
+  document.getElementById('f-sec').oninput = function () {
+    st.sec = parseInt(this.value, 10) || 1800;
+    deadline = Date.now() + st.sec * 1000;
+    buildUrl(); render();
+  };
+
+  document.getElementById('f-auto').value = st.auto;
+  document.getElementById('f-auto').oninput = function () {
+    st.auto = parseInt(this.value, 10) || 0;
+    buildUrl(); render();
+  };
+
+  document.getElementById('copy').onclick = function () { copy(out.value); };
+  document.getElementById('reset').onclick = function () {
+    deadline = Date.now() + st.sec * 1000;
+    render();
+    hint.textContent = '最初から再生しました。';
+  };
+  document.getElementById('toggle').onclick = function () {
+    var p = document.getElementById('panel');
+    p.hidden = !p.hidden;
+  };
+
+  buildUrl();
+  render();
+})();
+</script>
+</body>
+</html>
